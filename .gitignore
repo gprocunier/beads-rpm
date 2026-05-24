@@ -1,0 +1,5 @@
+.rpmbuild/
+*.rpm
+*.src.rpm
+*.tar.gz
+*.tmp
