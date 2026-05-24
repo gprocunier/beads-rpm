@@ -34,6 +34,9 @@ The source-prep step clones the upstream tag, vendors Go modules, downloads the
 pinned Go toolchain, and includes both artifacts in the SRPM so COPR binary
 builds do not need network access.
 
+COPR's `make_srpm` source method calls `.copr/Makefile`. The root `Makefile`
+is for local use and delegates to the same source-prep script.
+
 ## COPR SCM Setup
 
 Configure the COPR package to build from this repository:

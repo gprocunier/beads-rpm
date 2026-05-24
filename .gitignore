@@ -1,4 +1,6 @@
 .rpmbuild/
+.rpmbuild-copr/
+copr-logs-*/
 *.rpm
 *.src.rpm
 *.tar.gz

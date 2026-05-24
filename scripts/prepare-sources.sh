@@ -32,6 +32,15 @@ fi
 
 mkdir -p "$sources_dir"
 
+workdir="$(mktemp -d)"
+cleanup() {
+    if [[ -d "$workdir" ]]; then
+        chmod -R u+w "$workdir" 2>/dev/null || true
+        rm -rf "$workdir"
+    fi
+}
+trap cleanup EXIT
+
 download() {
     local url="$1"
     local dest="$2"
@@ -58,14 +67,24 @@ source_tarball="${sources_dir}/beads-${version}-vendor.tar.gz"
 
 download "https://go.dev/dl/go${go_version}.linux-amd64.tar.gz" "$go_tarball"
 
-workdir="$(mktemp -d)"
-cleanup() {
-    if [[ -d "$workdir" ]]; then
-        chmod -R u+w "$workdir" 2>/dev/null || true
-        rm -rf "$workdir"
-    fi
-}
-trap cleanup EXIT
+case "$(uname -m)" in
+    x86_64)
+        host_go_arch="amd64"
+        ;;
+    aarch64|arm64)
+        host_go_arch="arm64"
+        ;;
+    *)
+        printf 'Unsupported source-build architecture for Go toolchain: %s\n' "$(uname -m)" >&2
+        exit 1
+        ;;
+esac
+
+host_go_tarball="$go_tarball"
+if [[ "$host_go_arch" != "amd64" ]]; then
+    host_go_tarball="${workdir}/go${go_version}.linux-${host_go_arch}.tar.gz"
+    download "https://go.dev/dl/go${go_version}.linux-${host_go_arch}.tar.gz" "$host_go_tarball"
+fi
 
 srcdir="${workdir}/beads-${version}"
 git clone --depth 1 --branch "v${version}" "$repo" "$srcdir"
@@ -82,7 +101,7 @@ rm -rf "$srcdir/.git"
 
 goroot="${workdir}/go"
 mkdir -p "$goroot"
-tar xzf "$go_tarball" -C "$goroot" --strip-components=1
+tar xzf "$host_go_tarball" -C "$goroot" --strip-components=1
 
 (
     cd "$srcdir"
