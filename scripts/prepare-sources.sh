@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-repo="${UPSTREAM_REPO:-https://github.com/gastownhall/beads.git}"
 spec="beads.spec"
 sources_dir=".rpmbuild/SOURCES"
 
@@ -87,7 +86,19 @@ if [[ "$host_go_arch" != "amd64" ]]; then
 fi
 
 srcdir="${workdir}/beads-${version}"
-git clone --depth 1 --branch "v${version}" "$repo" "$srcdir"
+source_archive="${workdir}/beads-v${version}.tar.gz"
+archive_url="${UPSTREAM_TARBALL_URL:-https://github.com/gastownhall/beads/archive/refs/tags/v${version}.tar.gz}"
+download "$archive_url" "$source_archive"
+tar xzf "$source_archive" -C "$workdir"
+
+if [[ ! -d "$srcdir" ]]; then
+    extracted_dir="$(find "$workdir" -mindepth 1 -maxdepth 1 -type d -name 'beads-*' | head -n 1)"
+    if [[ -z "$extracted_dir" ]]; then
+        printf 'Could not find extracted upstream source directory in %s\n' "$workdir" >&2
+        exit 1
+    fi
+    mv "$extracted_dir" "$srcdir"
+fi
 
 actual_go_version="$(sed -n 's/^go //p' "$srcdir/go.mod" | head -n 1)"
 if [[ "$actual_go_version" != "$go_version" ]]; then
@@ -96,8 +107,7 @@ if [[ "$actual_go_version" != "$go_version" ]]; then
     exit 1
 fi
 
-epoch="$(git -C "$srcdir" log -1 --format=%ct)"
-rm -rf "$srcdir/.git"
+epoch="${SOURCE_DATE_EPOCH:-$(date -u +%s)}"
 
 goroot="${workdir}/go"
 mkdir -p "$goroot"

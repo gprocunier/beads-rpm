@@ -30,9 +30,9 @@ To pin a specific upstream tag:
 make srpm
 ```
 
-The source-prep step clones the upstream tag, vendors Go modules, downloads the
-pinned Go toolchain, and includes both artifacts in the SRPM so COPR binary
-builds do not need network access.
+The source-prep step downloads the upstream release tarball, vendors Go
+modules, downloads the pinned Go toolchain, and includes both artifacts in the
+SRPM so COPR binary builds do not need network access.
 
 COPR's `make_srpm` source method calls `.copr/Makefile`. The root `Makefile`
 is for local use and delegates to the same source-prep script.
