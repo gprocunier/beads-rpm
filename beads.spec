@@ -3,7 +3,7 @@
 %global debug_package %{nil}
 
 Name:           beads
-Version:        1.1.0
+Version:        1.1.2
 Release:        1%{?dist}
 Summary:        Distributed graph issue tracker for AI agents
 License:        MIT
@@ -64,6 +64,9 @@ install -d %{buildroot}%{_datadir}/fish/vendor_completions.d
 %{_datadir}/fish/vendor_completions.d/bd.fish
 
 %changelog
+* Mon Jul 27 2026 Greg Procunier - 1.1.2-1
+- Update to upstream v1.1.2
+
 * Sat Jul 04 2026 Greg Procunier - 1.1.0-1
 - Update to upstream v1.1.0
 
