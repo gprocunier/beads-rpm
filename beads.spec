@@ -1,9 +1,9 @@
 %global goipath github.com/steveyegge/beads
-%global go_version 1.26.2
+%global go_version 1.26.5
 %global debug_package %{nil}
 
 Name:           beads
-Version:        1.1.2
+Version:        1.2.1
 Release:        1%{?dist}
 Summary:        Distributed graph issue tracker for AI agents
 License:        MIT
@@ -64,6 +64,9 @@ install -d %{buildroot}%{_datadir}/fish/vendor_completions.d
 %{_datadir}/fish/vendor_completions.d/bd.fish
 
 %changelog
+* Wed Aug 12 2026 Greg Procunier - 1.2.1-1
+- Update to upstream v1.2.1
+
 * Mon Jul 27 2026 Greg Procunier - 1.1.2-1
 - Update to upstream v1.1.2
 
